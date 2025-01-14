@@ -1,94 +1,43 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "OpenAPI Plant Store",
-    "description": "A sample API that uses a plant store as an example to demonstrate features in the OpenAPI specification",
-    "license": {
-      "name": "MIT"
-    },
+    "title": "3X Pay Gateway",
+    "description": "Para autenticar as rotas dessa API são necessario ter em mãos a **api_secret** e **api_key** da sua conta. Este podem ser encontrados dentro do painel https://app.3xpay.co acessando a página de Configurações e clicando na opção de Credencias de API.",
     "version": "1.0.0"
   },
   "servers": [
     {
-      "url": "http://sandbox.mintlify.com"
+      "url": "https://gateway.3xpay.co"
     }
   ],
   "security": [
     {
-      "bearerAuth": []
+      "apiKeyAuth": [],
+      "apiSecretAuth": []
     }
   ],
   "paths": {
-    "/plants": {
-      "get": {
-        "description": "Returns all plants from the system that the user has access to",
-        "parameters": [
-          {
-            "name": "limit",
-            "in": "query",
-            "description": "The maximum number of results to return",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Plant response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Plant"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      },
+    "/transaction/cash-in": {
       "post": {
-        "description": "Creates a new plant in the store",
+        "summary": "CashIn",
+        "description": "Cria uma nova transação de entrada (cash-in)",
         "requestBody": {
-          "description": "Plant to add to the store",
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/NewPlant"
+                "$ref": "#/components/schemas/CashInRequest"
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
-          "200": {
-            "description": "plant response",
+          "201": {
+            "description": "Transação criada com sucesso",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Plant"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "$ref": "#/components/schemas/CashInResponse"
                 }
               }
             }
@@ -96,32 +45,104 @@
         }
       }
     },
-    "/plants/{id}": {
-      "delete": {
-        "description": "Deletes a single plant based on the ID supplied",
+    "/transaction/cash-out": {
+      "post": {
+        "summary": "CashOut",
+        "description": "Cria uma nova transação de saída (cash-out)",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CashOutRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Transação criada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CashOutResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transaction": {
+      "post": {
+        "summary": "Checkout Transparente",
+        "description": "Cria uma nova transação de checkout transparente",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CheckoutRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Transação criada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CheckoutResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transaction/refund": {
+      "post": {
+        "summary": "Refund",
+        "description": "Realiza o estorno de uma transação",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefundRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Estorno realizado com sucesso"
+          }
+        }
+      }
+    },
+    "/transaction/{transactionId}/find": {
+      "get": {
+        "summary": "Consultar Transação",
+        "description": "Consulta os detalhes de uma transação específica",
         "parameters": [
           {
-            "name": "id",
+            "name": "transactionId",
             "in": "path",
-            "description": "ID of plant to delete",
             "required": true,
             "schema": {
-              "type": "integer",
-              "format": "int64"
+              "type": "string"
             }
           }
         ],
         "responses": {
-          "204": {
-            "description": "Plant deleted",
-            "content": {}
-          },
-          "400": {
-            "description": "unexpected error",
+          "200": {
+            "description": "Detalhes da transação",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Error"
+                  "$ref": "#/components/schemas/TransactionResponse"
                 }
               }
             }
@@ -132,63 +153,370 @@
   },
   "components": {
     "schemas": {
-      "Plant": {
-        "required": [
-          "name"
-        ],
+      "CashInRequest": {
         "type": "object",
         "properties": {
-          "name": {
-            "description": "The name of the plant",
+          "transaction": {
+            "type": "object",
+            "required": ["amount", "callback_url", "external_id"],
+            "properties": {
+              "amount": {
+                "type": "number",
+                "description": "O valor a ser transacionado"
+              },
+              "callback_url": {
+                "type": "string",
+                "description": "A URL para a qual o callback da transação será enviado"
+              },
+              "external_id": {
+                "type": "string",
+                "description": "O identificador externo para a transação"
+              }
+            }
+          }
+        }
+      },
+      "CashInResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
             "type": "string"
           },
-          "tag": {
-            "description": "Tag to specify the type",
+          "payment": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "type": "string"
+              },
+              "transaction_id": {
+                "type": "string"
+              },
+              "payment_code": {
+                "type": "string"
+              },
+              "link": {
+                "type": "string"
+              },
+              "total": {
+                "type": "number"
+              }
+            }
+          },
+          "transaction_id": {
             "type": "string"
           }
         }
       },
-      "NewPlant": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Plant"
-          },
-          {
-            "required": [
-              "id"
-            ],
+      "CashOutRequest": {
+        "type": "object",
+        "properties": {
+          "transaction": {
             "type": "object",
+            "required": ["key", "amount", "callback_url", "external_id", "pixType"],
             "properties": {
-              "id": {
-                "description": "Identification number of the plant",
-                "type": "integer",
-                "format": "int64"
+              "key": {
+                "type": "string",
+                "description": "Chave PIX do destinatário"
+              },
+              "amount": {
+                "type": "number",
+                "description": "O valor a ser transacionado"
+              },
+              "callback_url": {
+                "type": "string",
+                "description": "A URL para a qual o callback da transação será enviado"
+              },
+              "external_id": {
+                "type": "string",
+                "description": "O identificador externo para a transação"
+              },
+              "pixType": {
+                "type": "string",
+                "description": "Tipo da chave PIX (CPF, CNPJ, EMAIL, TELEFONE, ALEATORIA)",
+                "enum": ["CPF", "CNPJ", "EMAIL", "TELEFONE", "ALEATORIA"]
               }
             }
           }
-        ]
+        }
       },
-      "Error": {
-        "required": [
-          "error",
-          "message"
-        ],
+      "CashOutResponse": {
         "type": "object",
         "properties": {
-          "error": {
-            "type": "integer",
-            "format": "int32"
+          "status": {
+            "type": "string",
+            "description": "Status da transação",
+            "example": "CREATED"
           },
-          "message": {
-            "type": "string"
+          "payment": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "type": "string",
+                "description": "Status do pagamento",
+                "example": "CREATED"
+              },
+              "transaction_id": {
+                "type": "string",
+                "description": "ID único da transação",
+                "example": "3b7abeda-205a-4439-a078-957e3f37c330"
+              },
+              "payment_code": {
+                "type": "string",
+                "description": "Código do pagamento"
+              },
+              "link": {
+                "type": "string",
+                "description": "Link relacionado ao pagamento"
+              },
+              "total": {
+                "type": "number",
+                "description": "Valor total da transação",
+                "example": 2
+              }
+            }
+          }
+        }
+      },
+      "CheckoutRequest": {
+        "type": "object",
+        "properties": {
+          "transaction": {
+            "type": "object",
+            "properties": {
+              "customer_infos": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Nome do cliente"
+                  },
+                  "email": {
+                    "type": "string",
+                    "description": "Email do cliente"
+                  },
+                  "document": {
+                    "type": "string",
+                    "description": "CPF/CNPJ do cliente"
+                  },
+                  "phone": {
+                    "type": "string",
+                    "description": "Telefone do cliente"
+                  }
+                },
+                "required": ["name", "email", "document", "phone"]
+              },
+              "address": {
+                "type": "object",
+                "properties": {
+                  "zipcode": {
+                    "type": "string",
+                    "description": "CEP do endereço"
+                  },
+                  "street": {
+                    "type": "string",
+                    "description": "Nome da rua"
+                  },
+                  "number": {
+                    "type": "string",
+                    "description": "Número do endereço"
+                  },
+                  "district": {
+                    "type": "string",
+                    "description": "Bairro"
+                  },
+                  "adjunct": {
+                    "type": "string",
+                    "description": "Complemento"
+                  },
+                  "city": {
+                    "type": "string",
+                    "description": "Cidade"
+                  },
+                  "state": {
+                    "type": "string",
+                    "description": "Estado"
+                  }
+                },
+                "required": ["zipcode", "street", "number", "district", "city", "state"]
+              },
+              "payment_method": {
+                "type": "string",
+                "description": "Método de pagamento",
+                "example": "PIX"
+              },
+              "installments": {
+                "type": "integer",
+                "description": "Número de parcelas"
+              },
+              "card_payment_method_id": {
+                "type": "string",
+                "description": "Bandeira do cartão"
+              },
+              "card_number": {
+                "type": "string",
+                "description": "Número do cartão"
+              },
+              "expiration_date": {
+                "type": "string",
+                "description": "Data de expiração do cartão",
+                "pattern": "^(0[1-9]|1[0-2])/([0-9]{2})$"
+              },
+              "cvv": {
+                "type": "string",
+                "description": "Código de segurança do cartão"
+              },
+              "holder_name": {
+                "type": "string",
+                "description": "Nome do titular do cartão"
+              },
+              "callback_url": {
+                "type": "string",
+                "description": "URL para callback"
+              },
+              "products": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "Nome do produto"
+                    },
+                    "price": {
+                      "type": "number",
+                      "description": "Preço do produto"
+                    },
+                    "quantity": {
+                      "type": "integer",
+                      "description": "Quantidade do produto"
+                    }
+                  },
+                  "required": ["name", "price", "quantity"]
+                }
+              }
+            }
+          }
+        }
+      },
+      "CheckoutResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Status da transação",
+            "example": "success"
+          },
+          "payment": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "type": "string",
+                "description": "Status do pagamento",
+                "example": "PROCESSING"
+              },
+              "transaction_id": {
+                "type": "string",
+                "description": "ID da transação",
+                "example": "ScEEPm9jzOgL1FbU2J673JDaNMqMV7S"
+              },
+              "payment_code": {
+                "type": "string",
+                "description": "Código de pagamento PIX"
+              },
+              "link": {
+                "type": "string",
+                "description": "Link para pagamento",
+                "example": "https://faturas.iugu.com/qr_code/3f11ceaf-5003-4c69-b24d-9d568f1baf25-00f1"
+              },
+              "due_date": {
+                "type": "string",
+                "description": "Data de vencimento",
+                "format": "date-time"
+              },
+              "total": {
+                "type": "number",
+                "description": "Valor total da transação"
+              }
+            }
+          }
+        }
+      },
+      "TransactionResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID único da transação",
+            "example": "a7c44162-c967-44e7-a374-4278ec174698"
+          },
+          "status": {
+            "type": "string",
+            "description": "Status atual da transação",
+            "example": "pending"
+          },
+          "pix": {
+            "type": "object",
+            "properties": {
+              "qrcode": {
+                "type": "string",
+                "description": "Código QR do PIX"
+              },
+              "end2EndId": {
+                "type": "string",
+                "description": "Identificador fim a fim da transação PIX"
+              },
+              "receiptUrl": {
+                "type": "string",
+                "description": "URL do comprovante da transação"
+              }
+            }
+          },
+          "boleto": {
+            "type": "null",
+            "description": "Informações do boleto, quando aplicável"
+          },
+          "refusedReason": {
+            "type": "null",
+            "description": "Motivo da recusa, quando aplicável"
+          },
+          "payer": {
+            "type": "object",
+            "properties": {
+              "accountNumber": {
+                "type": "string",
+                "description": "Número da conta do pagador"
+              },
+              "agencyNumber": {
+                "type": "string",
+                "description": "Número da agência do pagador"
+              },
+              "bankName": {
+                "type": "string",
+                "description": "Nome do banco do pagador"
+              },
+              "bankCode": {
+                "type": "string",
+                "description": "Código do banco do pagador"
+              },
+              "bankIspb": {
+                "type": "string",
+                "description": "Código ISPB do banco do pagador"
+              }
+            }
           }
         }
       }
     },
     "securitySchemes": {
-      "bearerAuth": {
-        "type": "http",
-        "scheme": "bearer"
+      "apiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "api_key"
+      },
+      "apiSecretAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "api_secret"
       }
     }
   }

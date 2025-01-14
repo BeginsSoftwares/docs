@@ -1,106 +1,82 @@
 ---
-title: 'Development'
-description: 'Preview changes locally to update your docs'
+title: 'Autenticação RSA'
+description: 'Aprenda a implementar autenticação segura com assinatura RSA'
 ---
 
-<Info>
-  **Prerequisite**: Please install Node.js (version 19 or higher) before proceeding.
-</Info>
+## O que é Assinatura RSA?
 
-Follow these steps to install and run Mintlify on your operating system:
+O algoritmo RSA é um método de criptografia de chave pública que utiliza dois pares de chaves:
 
-**Step 1**: Install Mintlify:
+- Uma chave pública para criptografar os dados
+- Uma chave privada para descriptografá-los
 
-<CodeGroup>
+A assinatura digital RSA é usada para garantir a autenticidade e a integridade de uma mensagem. Isso é feito criando uma assinatura digital que pode ser verificada por qualquer pessoa que tenha a chave pública do remetente.
 
-  ```bash npm
-  npm i -g mintlify
-  ```
+## Gerando suas Chaves
 
-```bash yarn
-yarn global add mintlify
-```
-
-</CodeGroup>
-
-**Step 2**: Navigate to the docs directory (where the `mint.json` file is located) and execute the following command:
-
-```bash
-mintlify dev
-```
-
-A local preview of your documentation will be available at `http://localhost:3000`.
-
-### Custom Ports
-
-By default, Mintlify uses port 3000. You can customize the port Mintlify runs on by using the `--port` flag. To run Mintlify on port 3333, for instance, use this command:
-
-```bash
-mintlify dev --port 3333
-```
-
-If you attempt to run Mintlify on a port that's already in use, it will use the next available port:
-
-```md
-Port 3000 is already in use. Trying 3001 instead.
-```
-
-## Mintlify Versions
-
-Please note that each CLI release is associated with a specific version of Mintlify. If your local website doesn't align with the production version, please update the CLI:
-
-<CodeGroup>
-
-```bash npm
-npm i -g mintlify@latest
-```
-
-```bash yarn
-yarn global upgrade mintlify
-```
-
-</CodeGroup>
-
-## Validating Links
-
-The CLI can assist with validating reference links made in your documentation. To identify any broken links, use the following command:
-
-```bash
-mintlify broken-links
-```
-
-## Deployment
-
-<Tip>
-  Unlimited editors available under the [Pro
-  Plan](https://mintlify.com/pricing) and above.
-</Tip>
-
-If the deployment is successful, you should see the following:
-
-<Frame>
-  <img src="/images/checks-passed.png" style={{ borderRadius: '0.5rem' }} />
-</Frame>
-
-## Code Formatting
-
-We suggest using extensions on your IDE to recognize and format MDX. If you're a VSCode user, consider the [MDX VSCode extension](https://marketplace.visualstudio.com/items?itemName=unifiedjs.vscode-mdx) for syntax highlighting, and [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) for code formatting.
-
-## Troubleshooting
+### 1. Gerar Chave Privada
 
 <AccordionGroup>
-  <Accordion title='Error: Could not load the "sharp" module using the darwin-arm64 runtime'>
+  <Accordion icon="shield-check" title="Gerar Chave Privada">
+    
+    ### Para gerar sua chave privada RSA, siga os passos:
 
-    This may be due to an outdated version of node. Try the following:
-    1. Remove the currently-installed version of mintlify: `npm remove -g mintlify`
-    2. Upgrade to Node v19 or higher.
-    3. Reinstall mintlify: `npm install -g mintlify`
-  </Accordion>
+    1. Abra o terminal/cmd
+    2. Navegue até o diretório onde deseja salvar as chaves
+    3. Execute o comando:
 
-  <Accordion title="Issue: Encountering an unknown error">
-  
-    Solution: Go to the root of your device and delete the \~/.mintlify folder. Afterwards, run `mintlify dev` again.
+    ```bash
+    openssl genrsa -out private.pem 2048
+    ```
+
+    Este comando irá gerar uma chave privada RSA de 2048 bits no arquivo private.pem
+
+    <Warning>
+      **Atenção: A Chave Privada não deve ser compartilhada**
+
+      - A Chave Privada deve ficar apenas no servidor do seu sistema
+      - Recomendamos manter a chave criptografada em ambiente seguro
+      - Ela será usada exclusivamente para gerar a assinatura do Body das requisições
+      - Em caso de vazamento, entre em contato imediatamente com nosso suporte
+    </Warning>
   </Accordion>
 </AccordionGroup>
 
-Curious about what changed in the CLI version? [Check out the CLI changelog.](https://www.npmjs.com/package/mintlify?activeTab=versions)
+### 2. Gerar Chave Pública
+
+<AccordionGroup>
+  <Accordion icon="shield-check" title="Gerar Chave Pública">
+    
+    ### Para gerar sua chave pública RSA a partir da chave privada:
+
+    1. No mesmo diretório da chave privada, execute:
+    ```bash
+    openssl rsa -in private.pem -outform PEM -pubout -out public.pem
+    ```
+
+    2. Após gerar a chave pública, você deve enviá-la para validação através do email:
+    **development@3xbank.co**
+
+    3. No email, inclua:
+      - Sua chave pública (arquivo public.pem)
+      - Nome de usuário
+
+    <Note>
+      Após o envio, nossa equipe irá validar e vincular a chave pública à sua conta em até 24 horas úteis.
+    </Note>
+  </Accordion>
+</AccordionGroup>
+
+## Exemplos de Implementação
+
+Para ajudar na integração, disponibilizamos repositórios com exemplos de como implementar a assinatura RSA em diferentes linguagens:
+
+- [Exemplo em Node.js](https://github.com/BeginsSoftwares/3X-Pay-rsa-node)
+- [Exemplo em PHP](https://github.com/BeginsSoftwares/3X-Pay-rsa-php) 
+- [Exemplo em Java](https://github.com/BeginsSoftwares/3X-Pay-rsa-java)
+
+<Note>
+Os exemplos incluem código para:
+- Criação da assinatura do payload
+- Validação da assinatura do payload
+</Note>
