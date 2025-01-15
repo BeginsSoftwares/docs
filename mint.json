@@ -48,6 +48,14 @@
         "api-reference/endpoint/create-checkout-transparente",
         "api-reference/endpoint/get-transaction"
       ]
+    },
+    {
+      "group": "Webhooks",
+      "pages": [
+        "api-reference/webhook/webhook-cashin",
+        "api-reference/webhook/webhook-cashout",
+        "api-reference/webhook/webhook-infraction"
+      ]
     }
   ]
 }
