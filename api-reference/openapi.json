@@ -10,6 +10,16 @@
       "url": "https://gateway.3xpay.co"
     }
   ],
+  "tags": [
+    {
+      "name": "Transações",
+      "description": "Operações relacionadas a transações financeiras"
+    },
+    {
+      "name": "Webhooks",
+      "description": "Notificações de eventos da API"
+    }
+  ],
   "security": [
     {
       "apiKeyAuth": [],
@@ -19,6 +29,8 @@
   "paths": {
     "/transaction/cash-in": {
       "post": {
+        "tags": ["Transações"],
+        "operationId": "createCashIn",
         "summary": "CashIn",
         "description": "Cria uma nova transação de entrada (cash-in)",
         "requestBody": {
@@ -47,6 +59,8 @@
     },
     "/transaction/cash-out": {
       "post": {
+        "tags": ["Transações"],
+        "operationId": "createCashOut",
         "summary": "CashOut",
         "description": "Cria uma nova transação de saída (cash-out)",
         "requestBody": {
@@ -54,7 +68,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CashOutRequest"
+                "$ref": "#/components/schemas/CashOutRequest" 
               }
             }
           }
@@ -75,6 +89,8 @@
     },
     "/transaction": {
       "post": {
+        "tags": ["Transações"],
+        "operationId": "createCheckout",
         "summary": "Checkout Transparente",
         "description": "Cria uma nova transação de checkout transparente",
         "requestBody": {
@@ -103,6 +119,8 @@
     },
     "/transaction/refund": {
       "post": {
+        "tags": ["Transações"],
+        "operationId": "createRefund",
         "summary": "Refund",
         "description": "Realiza o estorno de uma transação",
         "requestBody": {
@@ -124,6 +142,8 @@
     },
     "/transaction/{transactionId}/find": {
       "get": {
+        "tags": ["Transações"],
+        "operationId": "findTransaction",
         "summary": "Consultar Transação",
         "description": "Consulta os detalhes de uma transação específica",
         "parameters": [
@@ -153,6 +173,60 @@
   },
   "components": {
     "schemas": {
+      "WebhookNotification": {
+        "type": "object",
+        "required": ["transactionStatus", "transactionId", "transactionType", "externalId", "value"],
+        "properties": {
+          "transactionStatus": {
+            "type": "string",
+            "description": "Status atual da transação",
+            "enum": ["PAID", "PENDING", "FAILED"]
+          },
+          "transactionId": {
+            "type": "string",
+            "description": "ID único da transação"
+          },
+          "transactionType": {
+            "type": "string",
+            "description": "Tipo da transação",
+            "enum": ["CASH_IN", "CASH_OUT"]
+          },
+          "externalId": {
+            "type": "string",
+            "description": "ID externo fornecido pelo cliente"
+          },
+          "value": {
+            "type": "number",
+            "description": "Valor da transação"
+          }
+        }
+      },
+      "RefundRequest": {
+        "type": "object",
+        "required": ["transaction_id"],
+        "properties": {
+          "transaction_id": {
+            "type": "string",
+            "description": "ID da transação a ser estornada"
+          }
+        }
+      },
+      "Error": {
+        "required": [
+          "error",
+          "message"
+        ],
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
       "CashInRequest": {
         "type": "object",
         "properties": {
@@ -180,30 +254,41 @@
         "type": "object",
         "properties": {
           "status": {
-            "type": "string"
+            "type": "string",
+            "description": "Status da transação",
+            "example": "PENDING"
           },
           "payment": {
             "type": "object",
             "properties": {
               "status": {
-                "type": "string"
+                "type": "string",
+                "description": "Status do pagamento",
+                "example": "PENDING"
               },
               "transaction_id": {
-                "type": "string"
+                "type": "string",
+                "description": "ID da transação",
+                "example": "W5qrXoQ6Me5kfw1mEaTsn9lizo"
               },
               "payment_code": {
-                "type": "string"
+                "type": "string",
+                "description": "Código de pagamento PIX"
               },
               "link": {
-                "type": "string"
+                "type": "string",
+                "description": "Link para pagamento"
               },
               "total": {
-                "type": "number"
+                "type": "number",
+                "description": "Valor total da transação"
               }
             }
           },
           "transaction_id": {
-            "type": "string"
+            "type": "string",
+            "description": "ID único da transação",
+            "example": "756afe09-0471-4124-9f35-6691fa130f5b"
           }
         }
       },
@@ -232,8 +317,8 @@
               },
               "pixType": {
                 "type": "string",
-                "description": "Tipo da chave PIX (CPF, CNPJ, EMAIL, TELEFONE, ALEATORIA)",
-                "enum": ["CPF", "CNPJ", "EMAIL", "TELEFONE", "ALEATORIA"]
+                "description": "Tipo da chave PIX",
+                "enum": ["CPF", "CNPJ", "PHONE", "EMAIL", "RANDOM"]
               }
             }
           }
@@ -257,20 +342,20 @@
               },
               "transaction_id": {
                 "type": "string",
-                "description": "ID único da transação",
+                "description": "ID da transação",
                 "example": "3b7abeda-205a-4439-a078-957e3f37c330"
               },
               "payment_code": {
                 "type": "string",
-                "description": "Código do pagamento"
+                "description": "Código de pagamento"
               },
               "link": {
                 "type": "string",
-                "description": "Link relacionado ao pagamento"
+                "description": "Link para pagamento"
               },
               "total": {
                 "type": "number",
-                "description": "Valor total da transação",
+                "description": "Valor total",
                 "example": 2
               }
             }
@@ -279,12 +364,21 @@
       },
       "CheckoutRequest": {
         "type": "object",
+        "required": ["transaction"],
         "properties": {
           "transaction": {
             "type": "object",
+            "required": [
+              "customer_infos",
+              "address",
+              "payment_method",
+              "callback_url",
+              "products"
+            ],
             "properties": {
               "customer_infos": {
                 "type": "object",
+                "required": ["name", "email", "document", "phone"],
                 "properties": {
                   "name": {
                     "type": "string",
@@ -302,23 +396,23 @@
                     "type": "string",
                     "description": "Telefone do cliente"
                   }
-                },
-                "required": ["name", "email", "document", "phone"]
+                }
               },
               "address": {
                 "type": "object",
+                "required": ["zipcode", "street", "number", "district", "city", "state"],
                 "properties": {
                   "zipcode": {
                     "type": "string",
-                    "description": "CEP do endereço"
+                    "description": "CEP"
                   },
                   "street": {
                     "type": "string",
-                    "description": "Nome da rua"
+                    "description": "Rua"
                   },
                   "number": {
                     "type": "string",
-                    "description": "Número do endereço"
+                    "description": "Número"
                   },
                   "district": {
                     "type": "string",
@@ -336,13 +430,12 @@
                     "type": "string",
                     "description": "Estado"
                   }
-                },
-                "required": ["zipcode", "street", "number", "district", "city", "state"]
+                }
               },
               "payment_method": {
                 "type": "string",
                 "description": "Método de pagamento",
-                "example": "PIX"
+                "enum": ["PIX", "CREDIT_CARD", "BILLET"]
               },
               "installments": {
                 "type": "integer",
@@ -377,6 +470,7 @@
                 "type": "array",
                 "items": {
                   "type": "object",
+                  "required": ["name", "price", "quantity"],
                   "properties": {
                     "name": {
                       "type": "string",
@@ -390,8 +484,7 @@
                       "type": "integer",
                       "description": "Quantidade do produto"
                     }
-                  },
-                  "required": ["name", "price", "quantity"]
+                  }
                 }
               }
             }
@@ -425,8 +518,7 @@
               },
               "link": {
                 "type": "string",
-                "description": "Link para pagamento",
-                "example": "https://faturas.iugu.com/qr_code/3f11ceaf-5003-4c69-b24d-9d568f1baf25-00f1"
+                "description": "Link para pagamento"
               },
               "due_date": {
                 "type": "string",
@@ -450,8 +542,8 @@
             "example": "a7c44162-c967-44e7-a374-4278ec174698"
           },
           "status": {
-            "type": "string",
-            "description": "Status atual da transação",
+            "type": "string", 
+            "description": "Status da transação",
             "example": "pending"
           },
           "pix": {
@@ -459,24 +551,24 @@
             "properties": {
               "qrcode": {
                 "type": "string",
-                "description": "Código QR do PIX"
+                "description": "QR Code PIX para pagamento"
               },
               "end2EndId": {
                 "type": "string",
-                "description": "Identificador fim a fim da transação PIX"
+                "description": "Identificador único da transação PIX"
               },
               "receiptUrl": {
                 "type": "string",
-                "description": "URL do comprovante da transação"
+                "description": "URL do comprovante de pagamento"
               }
             }
           },
           "boleto": {
-            "type": "null",
-            "description": "Informações do boleto, quando aplicável"
+            "type": ["object", "null"],
+            "description": "Dados do boleto, quando aplicável"
           },
           "refusedReason": {
-            "type": "null",
+            "type": ["string", "null"],
             "description": "Motivo da recusa, quando aplicável"
           },
           "payer": {
@@ -487,7 +579,7 @@
                 "description": "Número da conta do pagador"
               },
               "agencyNumber": {
-                "type": "string",
+                "type": "string", 
                 "description": "Número da agência do pagador"
               },
               "bankName": {
@@ -516,7 +608,7 @@
       "apiSecretAuth": {
         "type": "apiKey",
         "in": "header",
-        "name": "api_secret"
+        "name": "api_secret" 
       }
     }
   }
