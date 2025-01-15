@@ -3,14 +3,26 @@ title: 'Autenticação RSA'
 description: 'Aprenda a implementar autenticação segura com assinatura RSA'
 ---
 
-## O que é Assinatura RSA?
+## Assinatura RSA para CashOut
 
-O algoritmo RSA é um método de criptografia de chave pública que utiliza dois pares de chaves:
+A assinatura RSA é necessária **apenas** para operações de CashOut em nossa API. Ao realizar uma requisição de CashOut, você precisa:
 
-- Uma chave pública para criptografar os dados
-- Uma chave privada para descriptografá-los
+1. Gerar uma assinatura digital do payload (corpo) da requisição
+2. Enviar essa assinatura no header `signature` da requisição
 
-A assinatura digital RSA é usada para garantir a autenticidade e a integridade de uma mensagem. Isso é feito criando uma assinatura digital que pode ser verificada por qualquer pessoa que tenha a chave pública do remetente.
+Este processo garante a autenticidade e integridade da transação de CashOut.
+
+## Como Funciona
+
+1. Você cria o payload da requisição de CashOut
+2. Gera uma assinatura digital desse payload usando sua chave privada RSA
+3. Envia a requisição para `/transaction/cash-out` incluindo:
+   - O payload no corpo da requisição
+   - A assinatura gerada no header `signature`
+
+<Note>
+A assinatura RSA é obrigatória **somente** para a rota de CashOut. Outras operações como CashIn e Checkout não requerem assinatura.
+</Note>
 
 ## Gerando suas Chaves
 

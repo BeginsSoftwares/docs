@@ -62,7 +62,7 @@
         "tags": ["Transações"],
         "operationId": "createCashOut",
         "summary": "CashOut",
-        "description": "Cria uma nova transação de saída (cash-out)",
+        "description": "Cria uma nova transação de saída (cash-out). O usuário deve incluir uma assinatura RSA no cabeçalho `signature` para autenticar a requisição.",
         "requestBody": {
           "required": true,
           "content": {
