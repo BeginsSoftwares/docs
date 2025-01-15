@@ -54,14 +54,6 @@
         "api-reference/endpoint/create-checkout-transparente",
         "api-reference/endpoint/get-transaction"
       ]
-    },
-    {
-      "group": "Endpoint Examples",
-      "pages": [
-        "api-reference/endpoint/get",
-        "api-reference/endpoint/create",
-        "api-reference/endpoint/delete"
-      ]
     }
   ],
   "footerSocials": {
