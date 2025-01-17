@@ -28,6 +28,7 @@ O webhook envia um payload JSON contendo os detalhes e status da transação.
 - `transactionId` (string): Identificador único da transação no formato UUID
 - `transactionStatus` (string): Status atual da transação. Valores possíveis:
   - `PAID`: Transação concluída com sucesso
+  - `FAILED`: Transação falhou
 - `transactionType` (string): Tipo da transação, neste caso "CASH_IN"
 - `value` (string): Valor da transação
 - `externalId` (string): ID de referência externa fornecido pelo cliente
