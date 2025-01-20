@@ -18,6 +18,10 @@
     {
       "name": "Webhooks",
       "description": "Notificações de eventos da API"
+    },
+    {
+      "name": "Balance",
+      "description": "Operações relacionadas ao saldo da conta"
     }
   ],
   "security": [
@@ -163,6 +167,26 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/TransactionResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/account/balance": {
+      "get": {
+        "tags": ["Balance"],
+        "operationId": "getBalance",
+        "summary": "Consultar Saldo",
+        "description": "Retorna o saldo disponível e saldo retido da conta",
+        "responses": {
+          "200": {
+            "description": "Saldo consultado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BalanceResponse"
                 }
               }
             }
@@ -530,6 +554,21 @@
                 "description": "Valor total da transação"
               }
             }
+          }
+        }
+      },
+      "BalanceResponse": {
+        "type": "object",
+        "properties": {
+          "balance": {
+            "type": "number",
+            "description": "Saldo disponível na conta",
+            "example": 7.56
+          },
+          "secure_balance": {
+            "type": "number", 
+            "description": "Saldo retido/em garantia",
+            "example": 10.28
           }
         }
       }

@@ -46,7 +46,8 @@
         "api-reference/endpoint/create-cashin",
         "api-reference/endpoint/create-cashout",
         "api-reference/endpoint/create-checkout-transparente",
-        "api-reference/endpoint/get-transaction"
+        "api-reference/endpoint/get-transaction",
+        "api-reference/endpoint/get-balance"
       ]
     },
     {
