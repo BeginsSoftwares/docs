@@ -569,6 +569,11 @@
             "type": "number", 
             "description": "Saldo retido/em garantia",
             "example": 10.28
+          },
+          "total_meds": {
+            "type": "number", 
+            "description": "Total de MEDs",
+            "example": 10.28
           }
         }
       }
