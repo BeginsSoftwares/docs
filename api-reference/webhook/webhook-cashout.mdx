@@ -15,10 +15,17 @@ O webhook envia um payload JSON contendo os detalhes e status da transação.
 ### Exemplo de Payload
 ```json
 {
+  "transactionId": "550e8400-e29b-41d4-a716-446655440000",
   "transactionStatus": "PAID",
   "transactionType": "CASH_OUT",
-  "value": "100.00",
-  "externalId": "pedido_123456"
+  "value": 100.00,
+  "externalId": "pedido_123456",
+  "creditorAccount": {
+    "name": "João Silva",
+    "document": "123.456.789-00",
+    "accountType": "CHECKING"
+  },
+  "e2e_id": "E12345678202403151234567890"
 }
 ```
 
@@ -29,9 +36,59 @@ O webhook envia um payload JSON contendo os detalhes e status da transação.
 - `transactionStatus` (string): Status atual da transação. Valores possíveis:
   - `PAID`: Transação concluída com sucesso
   - `FAILED`: Transação falhou
-- `transactionType` (string): Tipo da transação, neste caso "CASH_IN"
-- `value` (string): Valor da transação
+  - `CHARGEBACK`: Transação estornada
+- `transactionType` (string): Tipo da transação, sempre "CASH_OUT"
+- `value` (number): Valor da transação
 - `externalId` (string): ID de referência externa fornecido pelo cliente
+- `error_message` (string, opcional): Mensagem de erro quando a transação falha ou é estornada
+- `creditorAccount` (objeto, opcional): Informações da conta do beneficiário quando a transação é bem-sucedida
+  - `name` (string): Nome do beneficiário
+  - `document` (string): Documento do beneficiário
+  - `accountType` (string): Tipo da conta
+- `e2e_id` (string, opcional): Identificador único da transação PIX
+
+### Exemplos por Status
+
+#### Transação Bem-sucedida
+```json
+{
+  "transactionId": "550e8400-e29b-41d4-a716-446655440000",
+  "transactionStatus": "PAID",
+  "transactionType": "CASH_OUT",
+  "value": 10,
+  "externalId": "pedido_123456",
+  "creditorAccount": {
+    "name": "João Silva",
+    "document": "123.456.789-00",
+    "accountType": "CHECKING"
+  },
+  "e2e_id": "E12345678202403151234567890"
+}
+```
+
+#### Transação Falha
+```json
+{
+  "transactionId": "550e8400-e29b-41d4-a716-446655440000",
+  "transactionStatus": "FAILED",
+  "transactionType": "CASH_OUT",
+  "value": 10,
+  "externalId": "pedido_123456",
+  "error_message": "Saldo insuficiente"
+}
+```
+
+#### Transação Estornada
+```json
+{
+  "transactionId": "550e8400-e29b-41d4-a716-446655440000",
+  "transactionStatus": "CHARGEBACK",
+  "transactionType": "CASH_OUT",
+  "value": 10,
+  "externalId": "pedido_123456",
+  "error_message": "REFUNDED"
+}
+```
 
 ## Boas Práticas
 
