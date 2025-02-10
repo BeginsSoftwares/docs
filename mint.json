@@ -30,8 +30,8 @@
       "group": "Início",
       "pages": [
         "introduction",
-        "quickstart",
-        "development"
+        "authentication",
+        "rsa"
       ]
     },
     {
