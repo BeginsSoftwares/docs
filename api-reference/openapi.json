@@ -269,6 +269,17 @@
               "external_id": {
                 "type": "string",
                 "description": "O identificador externo para a transação"
+              },
+              "expiration": {
+                "type": "number",
+                "description": "A data de expiração em segundos do QRCode",
+                "example": 3600
+              },
+              "custom_message": {
+                "type": "string",
+                "description": "Mensagem customizada para o pagador",
+                "example": "Pix para o pedido 123456",
+                "maxLength": 130
               }
             }
           }
