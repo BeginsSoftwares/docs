@@ -174,7 +174,7 @@
         }
       }
     },
-    "/user/account/balance": {
+    "/users/account/balance": {
       "get": {
         "tags": ["Balance"],
         "operationId": "getBalance",
