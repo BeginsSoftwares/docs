@@ -280,6 +280,22 @@
                 "description": "Mensagem customizada para o pagador",
                 "example": "Pix para o pedido 123456",
                 "maxLength": 130
+              },
+              "debtor": {
+                "type": "object",
+                "required": ["name", "document"],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Nome do pagador",
+                    "example": "João da Silva"
+                  },
+                  "document": {
+                    "type": "string",
+                    "description": "Documento do pagador (CPF) apenas números",
+                    "example": "12345678901"
+                  }
+                }
               }
             }
           }
