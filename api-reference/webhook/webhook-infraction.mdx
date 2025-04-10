@@ -60,6 +60,43 @@ Implemente lógica de retry para entregas de webhook falhas
   Para que a transação tenha seu fluxo finalizado com Sucesso é de extrema importancia que seja retornado 200 na resposta!
 </Warning>
 
+## Consulta de Comprovante
+
+### Endpoint
+```http
+GET /transaction/{transactionId}/receipt
+```
+
+### Parâmetros do Path
+- `transactionId` (string): Identificador único da transação no formato UUID
+
+### Exemplo de Requisição
+```http
+GET /transaction/b6e0ee4e-b3a3-4042-ac4d-fba92ebd96a5/receipt
+```
+
+### Resposta de Sucesso
+- **Status Code:** 200 OK
+
+```json
+{
+    "status": "SUCCESS",
+    "data": {
+        "receipt": "JVBERi0xLjMKJf.....", // String em base64 do arquivo PDF
+        "mimeType": "application/pdf"
+    }
+}
+```
+
+### Descrição dos Campos da Resposta
+- `status` (string): Status da requisição
+- `data` (object): Objeto contendo os dados do comprovante
+  - `receipt` (string): Conteúdo do comprovante em formato base64
+  - `mimeType` (string): Tipo do arquivo do comprovante (application/pdf)
+
+### Observações
+- O campo `receipt` contém o arquivo PDF codificado em base64
+- Para visualizar o comprovante, é necessário decodificar o conteúdo base64 para PDF
 
 export default function MDXPage({ children }) {
   return <div className="docs-container">{children}</div>;

@@ -144,7 +144,7 @@
         }
       }
     },
-    "/transaction/{transactionId}/find": {
+    "/transaction/v2/{transactionId}/find": {
       "get": {
         "tags": ["Transações"],
         "operationId": "findTransaction",
@@ -187,6 +187,36 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/BalanceResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transaction/{transactionId}/receipt": {
+      "get": {
+        "tags": ["Transações"],
+        "operationId": "getReceipt",
+        "summary": "Consultar Recibo",
+        "description": "Consulta o recibo de uma transação específica",
+        "parameters": [
+          {
+            "name": "transactionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Detalhes da transação",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReceiptResponse"
                 }
               }
             }
@@ -381,7 +411,7 @@
           "status": {
             "type": "string",
             "description": "Status da transação",
-            "example": "CREATED"
+            "example": "success"
           },
           "payment": {
             "type": "object",
@@ -389,7 +419,7 @@
               "status": {
                 "type": "string",
                 "description": "Status do pagamento",
-                "example": "CREATED"
+                "example": "pending"
               },
               "transaction_id": {
                 "type": "string",
@@ -603,6 +633,153 @@
             "example": 10.28
           }
         }
+      },
+      "ReceiptResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Status da resposta",
+            "example": "SUCCESS"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "receipt": {
+                "type": "string",
+                "description": "Conteúdo do comprovante em base64",
+                "example": "JVBERi0xLjMKJf..."
+              },
+              "mimeType": {
+                "type": "string",
+                "description": "Tipo do arquivo do comprovante",
+                "example": "application/pdf"
+              }
+            }
+          }
+        }
+      },
+      "TransactionResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Status da resposta",
+            "example": "SUCCESS"
+          },
+          "transaction": {
+            "type": "object",
+            "properties": {
+              "transaction_id": {
+                "type": "string",
+                "description": "Identificador único da transação",
+                "example": "001d9bf0-d736-4882-8ed0-e332bb118009"
+              },
+              "external_id": {
+                "type": "string",
+                "description": "Identificador externo da transação",
+                "example": "G50403083329447uMFsSb"
+              },
+              "status": {
+                "type": "string",
+                "description": "Status da transação",
+                "example": "PROCESSED"
+              },
+              "typeTransaction": {
+                "type": "string",
+                "description": "Tipo da transação",
+                "example": "OUT"
+              },
+              "total": {
+                "type": "string",
+                "description": "Valor total da transação",
+                "example": "579.06"
+              },
+              "created_at": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Data de criação da transação",
+                "example": "2025-04-03T11:33:31.104Z"
+              },
+              "updated_at": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Data da última atualização da transação",
+                "example": "2025-04-03T11:33:36.244Z"
+              },
+              "e2e_id": {
+                "type": "string",
+                "description": "Identificador end-to-end da transação PIX",
+                "example": "E05491616202504031133322540c3ea4"
+              },
+              "error_message": {
+                "type": "string",
+                "nullable": true,
+                "description": "Mensagem de erro, se houver"
+              },
+              "payer": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Nome do pagador",
+                    "example": "3X INSTITUICAO DE PAGAMENTO LTDA"
+                  },
+                  "document": {
+                    "type": "string",
+                    "description": "Documento do pagador (CPF/CNPJ)",
+                    "example": "36.010.822/0001-09"
+                  },
+                  "bankCode": {
+                    "type": "string",
+                    "description": "Código do banco do pagador",
+                    "example": "400"
+                  },
+                  "bankName": {
+                    "type": "string",
+                    "description": "Nome do banco do pagador",
+                    "example": "COOP CREDITAG"
+                  },
+                  "bankIspb": {
+                    "type": "string",
+                    "description": "Código ISPB do banco do pagador",
+                    "example": "5491616"
+                  }
+                }
+              },
+              "receiver": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Nome do recebedor",
+                    "example": "GABRIEL DIBACHTI INACIO DA SILVA"
+                  },
+                  "document": {
+                    "type": "string",
+                    "description": "Documento do recebedor (CPF/CNPJ)",
+                    "example": "022.***.***-40"
+                  },
+                  "bankCode": {
+                    "type": "string",
+                    "description": "Código do banco do recebedor",
+                    "example": "077"
+                  },
+                  "bankName": {
+                    "type": "string",
+                    "description": "Nome do banco do recebedor",
+                    "example": "BANCO INTER"
+                  },
+                  "bankIspb": {
+                    "type": "string",
+                    "description": "Código ISPB do banco do recebedor",
+                    "example": "00416968"
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "securitySchemes": {
@@ -614,7 +791,7 @@
       "apiSecretAuth": {
         "type": "apiKey",
         "in": "header",
-        "name": "api_secret" 
+        "name": "api_secret"
       }
     }
   }
