@@ -20,7 +20,8 @@ O webhook envia um payload JSON contendo os detalhes da infração e da transaç
   "transactionType": "CASH_IN",
   "value": 18,
   "externalId": "T&ste378",
-  "e2e_id": "E082535392025011818245238600338f"
+  "e2e_id": "E082535392025011818245238600338f",
+  "medStatus": "ACKNOWLEDGED"
 }
 ```
 
@@ -33,6 +34,9 @@ O webhook envia um payload JSON contendo os detalhes da infração e da transaç
 - `transactionType` (string): Tipo da transação, neste caso "CASH_IN"
 - `value` (string): Valor da transação
 - `externalId` (string): ID de referência externa fornecido pelo cliente
+- `medStatus` (string): Status do MED. Valores possíveis:
+  - `ACKNOWLEDGED`: Quando a solicitação do MED é recebida
+  - `CANCELLED`: Quando o MED é cancelado e o valor estornado para conta
 
 ## Boas Práticas
 
