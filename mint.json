@@ -35,9 +35,30 @@
       ]
     },
     {
+      "group": "Banking as a Service (BaaS)",
+      "pages": [
+        "baas/introduction",
+        "baas/sub-accounts/introduction",
+        "baas/sub-accounts/required-documents",
+        "baas/sub-accounts/create",
+        "baas/sub-accounts/document-personal",
+        "baas/sub-accounts/document-company",
+        "baas/sub-accounts/open-account"
+      ]
+    },
+    {
       "group": "API Documentation",
       "pages": [
         "api-reference/introduction"
+      ]
+    },
+    {
+      "group": "Sub-accounts API",
+      "pages": [
+        "api-reference/sub-accounts/create-sub-account",
+        "api-reference/sub-accounts/upload-personal-document",
+        "api-reference/sub-accounts/upload-company-document",
+        "api-reference/sub-accounts/open-full-account"
       ]
     },
     {

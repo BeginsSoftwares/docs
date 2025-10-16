@@ -1,0 +1,120 @@
+---
+title: Subcontas - Introdução
+description: "Documentação completa das rotas de subcontas para integração BaaS"
+---
+
+## Visão Geral
+
+As rotas de subcontas permitem criar e gerenciar contas completas para seus clientes, incluindo usuário, empresa e integração com processador de pagamentos.
+
+## 🔐 Autenticação
+
+Todas as rotas utilizam autenticação com os headers:
+- `api_key`: Chave de API do usuário
+- `api_secret`: Secret de API do usuário
+
+## Endpoints Disponíveis
+
+<CardGroup cols={2}>
+  <Card
+    title="Documentos Obrigatórios"
+    icon="file-check"
+    href="/baas/sub-accounts/required-documents"
+  >
+    Lista completa dos documentos necessários para criação de subcontas
+  </Card>
+  <Card
+    title="Criar Subconta"
+    icon="plus"
+    href="/baas/sub-accounts/create"
+  >
+    Cria uma nova subconta completa com usuário e empresa
+  </Card>
+  <Card
+    title="Upload Documento Pessoal"
+    icon="upload"
+    href="/baas/sub-accounts/document-personal"
+  >
+    Upload de documentos pessoais (RG, CNH, Selfie)
+  </Card>
+  <Card
+    title="Upload Documento Empresa"
+    icon="building"
+    href="/baas/sub-accounts/document-company"
+  >
+    Upload de documentos empresariais (Contrato Social)
+  </Card>
+  <Card
+    title="Abrir Conta Completa"
+    icon="check-circle"
+    href="/baas/sub-accounts/open-account"
+  >
+    Inicia processo de abertura de conta no processador
+  </Card>
+</CardGroup>
+
+## Fluxo Recomendado
+
+<Steps>
+  <Step title="1. Verificar Documentos">
+    Consulte a lista de documentos obrigatórios antes de começar
+  </Step>
+  <Step title="2. Criar Subconta">
+    Use `POST /sub-accounts` para criar a subconta com todas as informações básicas
+  </Step>
+  <Step title="3. Upload Documentos">
+    Faça upload dos documentos pessoais e empresariais obrigatórios
+  </Step>
+  <Step title="4. Abrir Conta">
+    Use `POST /sub-accounts/open-full-account` para iniciar o processo de análise
+  </Step>
+  <Step title="5. Monitorar">
+    Acompanhe o status através de webhooks e consultas de status
+  </Step>
+</Steps>
+
+## Características Especiais
+
+- ✅ **Senha automática**: Gerada automaticamente para o cliente
+- ✅ **Normalização de nome**: Remove acentos e substitui espaços por underscore
+- ✅ **Taxas padrão**: Cria registro `UserAgentFee` com taxas padrão
+- ✅ **Integração Woovi**: Abre conta automaticamente no processador de pagamento
+- ✅ **Validação rigorosa**: Todos os dados são validados com `class-validator`
+- ✅ **Isolamento**: Cada subconta só pode acessar seus próprios recursos
+
+## Códigos de Erro Comuns
+
+<AccordionGroup>
+  <Accordion title="400 - Bad Request">
+    ```json
+    {
+      "message": "Tipo de documento inválido.",
+      "statusCode": 400
+    }
+    ```
+  </Accordion>
+  <Accordion title="401 - Unauthorized">
+    ```json
+    {
+      "message": "Api Key não encontrada.",
+      "statusCode": 401
+    }
+    ```
+  </Accordion>
+  <Accordion title="409 - Conflict">
+    ```json
+    {
+      "message": "Email já cadastrado.",
+      "statusCode": 409
+    }
+    ```
+  </Accordion>
+  <Accordion title="500 - Internal Server Error">
+    ```json
+    {
+      "message": "Erro ao registrar conta na Woovi.",
+      "statusCode": 500
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
