@@ -73,15 +73,6 @@ Todas as rotas utilizam autenticação com os headers:
   </Step>
 </Steps>
 
-## Características Especiais
-
-- ✅ **Senha automática**: Gerada automaticamente para o cliente
-- ✅ **Normalização de nome**: Remove acentos e substitui espaços por underscore
-- ✅ **Taxas padrão**: Cria registro `UserAgentFee` com taxas padrão
-- ✅ **Integração Woovi**: Abre conta automaticamente no processador de pagamento
-- ✅ **Validação rigorosa**: Todos os dados são validados com `class-validator`
-- ✅ **Isolamento**: Cada subconta só pode acessar seus próprios recursos
-
 ## Códigos de Erro Comuns
 
 <AccordionGroup>
@@ -112,7 +103,7 @@ Todas as rotas utilizam autenticação com os headers:
   <Accordion title="500 - Internal Server Error">
     ```json
     {
-      "message": "Erro ao registrar conta na Woovi.",
+      "message": "Erro ao registrar conta.",
       "statusCode": 500
     }
     ```

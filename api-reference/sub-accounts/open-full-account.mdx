@@ -5,7 +5,7 @@ openapi: 'POST /sub-accounts/open-full-account'
 
 ## Abertura de Conta Completa
 
-Inicia o processo de abertura de conta completa na Woovi (processador de pagamento).
+Inicia o processo de abertura de conta completa.
 
 ### Headers
 
@@ -83,7 +83,6 @@ Após chamar este endpoint, a conta passará pelos seguintes status:
 ### Características
 
 - ✅ **Processo assíncrono**: Conta fica em análise
-- ✅ **Integração Woovi**: Registra conta no processador de pagamento
 - ✅ **Validação de documentos**: Verifica documentos obrigatórios
 - ✅ **Tratamento de erros**: Retorna erro específico se CNPJ inválido
 
@@ -117,7 +116,7 @@ Após chamar este endpoint, a conta passará pelos seguintes status:
   <Accordion title="500 - Internal Server Error">
     ```json
     {
-      "message": "Erro ao registrar conta na Woovi.",
+      "message": "Erro ao registrar conta.",
       "statusCode": 500
     }
     ```

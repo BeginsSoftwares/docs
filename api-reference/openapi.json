@@ -349,7 +349,7 @@
         "tags": ["Sub-accounts"],
         "operationId": "openFullAccount",
         "summary": "Abrir Conta Completa",
-        "description": "Inicia o processo de abertura de conta completa na Woovi",
+        "description": "Inicia o processo de abertura de conta completa",
         "requestBody": {
           "required": true,
           "content": {
