@@ -24,7 +24,7 @@ Faz upload de documentos da empresa (Contrato Social).
 ### Body (Form Data)
 
 <ParamField path="documentType" type="string" required>
-  Tipo do documento (SocialContract)
+  Tipo do documento (SOCIAL_CONTRACT)
 </ParamField>
 
 <ParamField path="file" type="File" required>
@@ -34,7 +34,7 @@ Faz upload de documentos da empresa (Contrato Social).
 ### Tipos de Documento Empresarial Aceitos
 
 <AccordionGroup>
-  <Accordion title="SocialContract">
+  <Accordion title="SOCIAL_CONTRACT">
     Contrato Social da empresa
   </Accordion>
 </AccordionGroup>
@@ -47,7 +47,7 @@ Faz upload de documentos da empresa (Contrato Social).
   "message": "Documento da empresa enviado com sucesso.",
   "data": {
     "filename": "contrato-social.pdf",
-    "document_type": "SocialContract",
+    "document_type": "SOCIAL_CONTRACT",
     "document_format": "PDF"
   }
 }

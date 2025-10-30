@@ -318,7 +318,7 @@
                   "documentType": {
                     "type": "string",
                     "description": "Tipo do documento",
-                    "enum": ["SocialContract"]
+                    "enum": ["SOCIAL_CONTRACT"]
                   },
                   "file": {
                     "type": "string",

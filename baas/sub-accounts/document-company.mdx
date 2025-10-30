@@ -24,7 +24,7 @@ Faz upload de documentos da empresa (Contrato Social, etc.).
 ### Body (Form Data)
 
 <ParamField path="documentType" type="string" required>
-  Tipo do documento (SocialContract, etc.)
+  Tipo do documento (SOCIAL_CONTRACT, etc.)
 </ParamField>
 
 <ParamField path="file" type="File" required>
@@ -37,7 +37,7 @@ Faz upload de documentos da empresa (Contrato Social, etc.).
 curl -X POST http://localhost:3000/sub-accounts/document/company \
   -H "api_key: ak_1234567890abcdef" \
   -H "api_secret: as_1234567890abcdef" \
-  -F "documentType=SocialContract" \
+  -F "documentType=SOCIAL_CONTRACT" \
   -F "file=@contrato-social.pdf"
 ```
 
@@ -49,7 +49,7 @@ curl -X POST http://localhost:3000/sub-accounts/document/company \
   "message": "Documento da empresa enviado com sucesso.",
   "data": {
     "filename": "contrato-social.pdf",
-    "document_type": "SocialContract",
+    "document_type": "SOCIAL_CONTRACT",
     "document_format": "PDF"
   }
 }
@@ -65,7 +65,7 @@ curl -X POST http://localhost:3000/sub-accounts/document/company \
 ### Tipos de Documento Empresarial Aceitos
 
 <AccordionGroup>
-  <Accordion title="SocialContract">
+  <Accordion title="SOCIAL_CONTRACT">
     Contrato Social da empresa
   </Accordion>
   <Accordion title="ArticlesOfIncorporation">
