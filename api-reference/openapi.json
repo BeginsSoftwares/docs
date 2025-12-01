@@ -867,6 +867,12 @@
                 "nullable": true,
                 "description": "Mensagem de erro, se houver"
               },
+              "payment_code": {
+                "type": "string",
+                "nullable": true,
+                "description": "Código de pagamento PIX",
+                "example": "00020101021226820014br.gov.bcb.pix2560qrcode.pagsm.com.br/pix/44c5e891-9afc-4c7f-9954-5fbdc69600eb5204000053039865802BR59043XIP6013BELOHORIZONTE61083401102162070503***63047DE4"
+              },
               "payer": {
                 "type": "object",
                 "properties": {
