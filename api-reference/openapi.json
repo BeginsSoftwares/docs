@@ -143,7 +143,47 @@
         },
         "responses": {
           "200": {
-            "description": "Estorno realizado com sucesso"
+            "description": "Estorno iniciado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RefundResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Erro na requisição de estorno",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "refundInProcessing": {
+                    "summary": "Reembolso já está em processamento",
+                    "value": {
+                      "error": 400,
+                      "message": "Reembolso já está em processamento. Aguarde a confirmação."
+                    }
+                  },
+                  "cannotRefund": {
+                    "summary": "Transação não pode ser estornada",
+                    "value": {
+                      "error": 400,
+                      "message": "Transação não pode ser estornada"
+                    }
+                  },
+                  "invalidTransactionId": {
+                    "summary": "ID da transação inválido",
+                    "value": {
+                      "error": 400,
+                      "message": "Id da transação inválido"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -384,7 +424,7 @@
           "transactionStatus": {
             "type": "string",
             "description": "Status atual da transação",
-            "enum": ["PAID", "PENDING", "FAILED"]
+            "enum": ["PAID", "PENDING", "FAILED", "CHARGEBACK", "REFUND", "REFUND_REJECTED"]
           },
           "transactionId": {
             "type": "string",
@@ -402,6 +442,11 @@
           "value": {
             "type": "number",
             "description": "Valor da transação"
+          },
+          "error_message": {
+            "type": "string",
+            "nullable": true,
+            "description": "Mensagem de erro ou status do refund (ex: 'REFUNDED' para estorno confirmado, ou código de erro para rejeição)"
           }
         }
       },
@@ -411,7 +456,60 @@
         "properties": {
           "transaction_id": {
             "type": "string",
-            "description": "ID da transação a ser estornada"
+            "description": "ID da transação a ser estornada",
+            "example": "aafee9f5-94b3-4e3d-ab6a-416d0a1218cb"
+          }
+        }
+      },
+      "RefundResponse": {
+        "type": "object",
+        "properties": {
+          "transaction_id": {
+            "type": "string",
+            "description": "ID da transação de estorno",
+            "example": "aafee9f5-94b3-4e3d-ab6a-416d0a1218cb"
+          },
+          "status": {
+            "type": "string",
+            "description": "Status do estorno",
+            "example": "IN_PROCESSING"
+          },
+          "value": {
+            "type": "number",
+            "description": "Valor do estorno em reais",
+            "example": 100.50
+          },
+          "e2e_id": {
+            "type": "string",
+            "nullable": true,
+            "description": "Identificador end-to-end da transação PIX",
+            "example": "E23114447202304181826HJNwY577YDX"
+          },
+          "payer": {
+            "type": "object",
+            "description": "Dados do pagador",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Nome do pagador"
+              },
+              "document": {
+                "type": "string",
+                "description": "Documento do pagador (CPF/CNPJ)"
+              },
+              "bankCode": {
+                "type": "string",
+                "description": "Código do banco do pagador"
+              },
+              "bankName": {
+                "type": "string",
+                "description": "Nome do banco do pagador"
+              },
+              "bankIspb": {
+                "type": "string",
+                "description": "Código ISPB do banco do pagador"
+              }
+            }
           }
         }
       },
