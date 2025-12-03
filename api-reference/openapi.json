@@ -346,7 +346,7 @@
         "tags": ["Sub-accounts"],
         "operationId": "uploadCompanyDocument",
         "summary": "Upload Documento Empresa",
-        "description": "Faz upload de documentos empresariais da subconta (Contrato Social)",
+        "description": "Faz upload de documentos empresariais da subconta (Comprovante de Endereço, CNPJ, Contrato Social)",
         "requestBody": {
           "required": true,
           "content": {
@@ -358,7 +358,7 @@
                   "documentType": {
                     "type": "string",
                     "description": "Tipo do documento",
-                    "enum": ["SOCIAL_CONTRACT"]
+                    "enum": ["PROOF_OF_RESIDENCE", "CNPJ", "SOCIAL_CONTRACT"]
                   },
                   "file": {
                     "type": "string",

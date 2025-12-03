@@ -24,16 +24,22 @@ Faz upload de documentos da empresa (Contrato Social).
 ### Body (Form Data)
 
 <ParamField path="documentType" type="string" required>
-  Tipo do documento (SOCIAL_CONTRACT)
+  Tipo do documento (PROOF_OF_RESIDENCE, CNPJ, SOCIAL_CONTRACT)
 </ParamField>
 
 <ParamField path="file" type="File" required>
-  Arquivo PDF (máximo 10MB)
+  Arquivo JPG, JPEG, PNG, GIF, WEBP ou PDF (máximo 10MB)
 </ParamField>
 
 ### Tipos de Documento Empresarial Aceitos
 
 <AccordionGroup>
+  <Accordion title="PROOF_OF_RESIDENCE">
+    Comprovante de Endereço
+  </Accordion>
+  <Accordion title="CNPJ">
+    CNPJ da empresa
+  </Accordion>
   <Accordion title="SOCIAL_CONTRACT">
     Contrato Social da empresa
   </Accordion>
