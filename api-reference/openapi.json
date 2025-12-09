@@ -91,6 +91,25 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Erro de validação ou QR Code expirado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "qrcodeExpired": {
+                    "summary": "QR Code expirado",
+                    "value": {
+                      "error": 400,
+                      "message": "qrcode já expirado"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -261,6 +280,46 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ReceiptResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transaction/decode-qrcode": {
+      "post": {
+        "tags": ["Transações"],
+        "operationId": "decodeQrCode",
+        "summary": "Decodificar QR Code",
+        "description": "Decodifica um QR Code EMV e retorna os dados se o QR estiver ativo",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DecodeQrRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "QR Code ativo",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DecodeQrSuccessResponse"
+                }
+              }
+            }
+          },
+          "410": {
+            "description": "QR Code expirado ou inativo",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DecodeQrExpiredResponse"
                 }
               }
             }
@@ -626,15 +685,15 @@
         "properties": {
           "transaction": {
             "type": "object",
-            "required": ["key", "amount", "callback_url", "external_id", "pixType"],
+            "required": ["key", "callback_url", "external_id", "pixType"],
             "properties": {
               "key": {
                 "type": "string",
-                "description": "Chave PIX do destinatário"
+                "description": "Chave PIX do destinatário ou EMV completo do QR Code para pixType=QRCODE"
               },
               "amount": {
                 "type": "number",
-                "description": "O valor a ser transacionado"
+                "description": "Valor a ser transacionado. Obrigatório exceto quando pixType=QRCODE (valor inferido do QR)."
               },
               "callback_url": {
                 "type": "string",
@@ -642,12 +701,12 @@
               },
               "external_id": {
                 "type": "string",
-                "description": "O identificador externo para a transação"
+                "description": "O identificador externo para a transação (pode ser sobrescrito com o txid quando pixType=QRCODE)"
               },
               "pixType": {
                 "type": "string",
                 "description": "Tipo da chave PIX",
-                "enum": ["CPF", "CNPJ", "PHONE", "EMAIL", "RANDOM"]
+                "enum": ["CPF", "CNPJ", "PHONE", "EMAIL", "RANDOM", "QRCODE"]
               }
             }
           }
@@ -1275,6 +1334,62 @@
             "type": "string",
             "description": "Mensagem de resposta",
             "example": "Conta em analise."
+          }
+        }
+      },
+      "DecodeQrRequest": {
+        "type": "object",
+        "required": ["emv"],
+        "properties": {
+          "emv": {
+            "type": "string",
+            "description": "Conteúdo EMV do QR Code"
+          }
+        }
+      },
+      "DecodeQrSuccessResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "success"
+          },
+          "qrcode": {
+            "type": "object",
+            "properties": {
+              "amount": {
+                "type": "number",
+                "example": 100.0
+              },
+              "expiresAt": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2025-12-08T20:27:51.580Z"
+              },
+              "receiver": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string", "example": "Blind Pay, Inc." },
+                  "city": { "type": "string", "example": "Vila Velha" },
+                  "key": { "type": "string", "example": "f0f64d04-1e7d-4e4f-976f-48f4c7e0c225" }
+                }
+              },
+              "txid": { "type": "string", "example": "d192067a12b2e43c38594b22af4128981" },
+              "url": { "type": "string", "example": "brcode.starkinfra.com/v2/192067a12b2e43c38594b22af4128981" }
+            }
+          }
+        }
+      },
+      "DecodeQrExpiredResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "example": "expired"
+          },
+          "message": {
+            "type": "string",
+            "example": "qrcode já expirado"
           }
         }
       }
